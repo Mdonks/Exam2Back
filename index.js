@@ -22,6 +22,16 @@ app.get('/', async (req, res) => {
     res.status(500).json({ mensaje: err.message });
   }
 });
+app.get('/item/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql = `SELECT * FROM Items WHERE id = $1`;
+    const result = await database.query(sql, [id]);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ mensaje: err.message });
+  }
+});
 
 app.post('/', upload.single('imagen'), async (req, res) => {
   try {
@@ -36,6 +46,16 @@ app.post('/', upload.single('imagen'), async (req, res) => {
     res.json(result);
   } catch (err) {
     console.error(err.message);
+    res.status(500).json({ mensaje: err.message });
+  }
+});
+app.delete('/item/delete/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql = `DELETE FROM Items WHERE id = $1 RETURNING 'Item eliminado con éxito' as mensaje`;
+    const result = await database.query(sql, [id]);
+    res.json(result);
+  } catch (err) {
     res.status(500).json({ mensaje: err.message });
   }
 });
